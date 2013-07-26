@@ -1,0 +1,36 @@
+#!/bin/bash
+
+if [ "$#" == "0" ]; then
+    echo "Usage: ./uninstaller <package-keyword>"
+    exit 1
+fi
+
+COUNT=`adb devices | sed 's/List of devices attached//g'  | sed 's/device//g' | grep "[^ ]" -c`
+
+if [ "$COUNT" == "1" ]; then
+	DEVICE=`adb devices | sed 's/List of devices attached//g'  | sed 's/device//g' | grep "[^ ]" `
+elif [ $COUNT -gt 1 ]; then
+		echo "Please select a device:"
+		select DEVICE in `adb devices | sed 's/List of devices attached//g'  | sed 's/device//g' | grep "[^ ]"`;
+		do
+		break
+		done
+else
+	echo "No device connected...?"
+	exit
+fi
+
+echo "With continueing the script you uninstall the following packages from $DEVICE:"
+
+for i in `adb -s $DEVICE shell pm list packages | sed 's/package://' | grep $1`; do
+	echo $i
+done
+
+read -p "Press [Enter] key to uninstall ... or press CTRL+C to exit"
+
+for i in `adb -s $DEVICE shell pm list packages | sed 's/package://' | grep $1`; do
+	i=`echo $i | sed 's/[^0-9\\.a-zA-Z_\\-]//g'`
+	adb -s $DEVICE shell pm uninstall $i
+done
+
+exit
