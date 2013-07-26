@@ -1,0 +1,1 @@
+With this script you can uninstall Apps from your connected device or emulator with a given part string as a keyword of the package name. The tool adb must be accessable from the bash... check that adb is in the current directory or in the PATH variable. 
